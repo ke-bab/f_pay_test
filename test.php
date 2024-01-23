@@ -12,6 +12,9 @@ spl_autoload_register(function ($class) {
     require_once $filename;
 });
 
+/**
+ * соединение с бд я убрал т.к. тест работает и без него - мы же просто проверяем строки в финале.
+ */
 
 try {
     $db = new Database();

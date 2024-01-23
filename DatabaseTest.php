@@ -37,6 +37,10 @@ class DatabaseTest
             [['name' => 'Jack', 'email' => null]]
         );
 
+        /**
+         * я не понял как должен в итоге работать условный блок - поэтому не стал его реализовывать.
+         */
+
 //        foreach ([null, true] as $block) {
 //            $results[] = $this->db->buildQuery(
 //                'SELECT name FROM users WHERE ?# IN (?a){ AND block = ?d}',
