@@ -47,10 +47,11 @@ class Database implements DatabaseInterface
         }
         // заменить каждый паттерн на данные нужного типа
         foreach ($foundReplacements as $replacement) {
+            $pos = strpos($newQuery, "?" . $replacement->getAnnotation());
             $newQuery = substr_replace(
                 $newQuery,
                 $replacement->getString(),
-                $replacement->getPos(),
+                $pos,
                 $replacement->getLen()
             );
         }

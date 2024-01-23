@@ -5,15 +5,16 @@ namespace FpDbTest\Builder;
 class Argument
 {
     private int $castBy;
+    private ?string $annotation;
     private int $pos;
     private mixed $data;
 
     public function __construct(string $query, int $pos, mixed $arg)
     {
-//        echo $arg . "\n";
-        $this->castBy = self::detectCastType($query, $pos);
+        $this->castBy = CastTypes::detectCastType($query, $pos);
         $this->pos = $pos;
         $this->data = $arg;
+        $this->annotation = $this->castBy === CastTypes::CAST_BY_VALUE ? null : $query[$pos + 1];
     }
 
     public function getPos(): int
@@ -21,32 +22,24 @@ class Argument
         return $this->pos;
     }
 
+    /**
+     * @throws \Exception
+     */
     public function getString(): string
     {
-        if (is_string($this->data)) {
-            return "'$this->data'";
-        }
-
-        return '';
+        return (string) CastTypes::getValue($this->castBy, $this->annotation, $this->data);
     }
 
+    /**
+     * Сколько символов заменить в исходной строке, 1 или 2 (? или ?d к примеру)
+     */
     public function getLen(): int
     {
         return $this->castBy === CastTypes::CAST_BY_VALUE ? 1 : 2;
     }
 
-    private static function detectCastType(string $query, int $pos): int
+    public function getAnnotation(): string
     {
-        if (!isset($query[$pos + 1])) {
-            // если за ? конец строки - это дефолтный каст
-            return CastTypes::CAST_BY_VALUE;
-        }
-        if (in_array($query[$pos + 1], CastTypes::TYPES)) {
-            // если есть корректный тип - это каст по типу
-            return CastTypes::CAST_BY_ANNOTATION;
-        }
-
-        // все остальные варианты - дефолтный каст (по значению)
-        return CastTypes::CAST_BY_VALUE;
+        return $this->annotation ?? '';
     }
 }
